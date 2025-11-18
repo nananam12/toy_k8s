@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bank-anthos-gateway
+spec:
+  selector:
+    # 우리가 'helm install'로 설치한 
+    # istio-ingressgateway 파드를 선택합니다.
+    istio: ingressgateway 
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*" # 어떤 도메인 이름으로 요청이 오든 받습니다.
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bank-anthos-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bank-anthos-gateway # 방금 위에서 만든 게이트웨이와 연결
+  http:
+  - route:
+    - destination:
+        # Bank of Anthos의 프론트엔드 서비스로 트래픽을 보냅니다.
+        host: frontend
+        port:
+          number: 80

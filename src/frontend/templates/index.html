@@ -17,6 +17,75 @@ limitations under the License.
 <html lang="en">
   <head>
 {% include 'shared/html_head.html' %}
+<style>
+/* 드롭다운 스크롤 가능하게 */
+.custom-select, select {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+select option {
+  padding: 8px;
+}
+.modal-body select {
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+/* 계좌번호 아이콘 색상 - 네이비 */
+.account-icon {
+  color: #232F3E !important;
+}
+
+/* 입금하기 버튼 - 네이비 */
+#depositSpan {
+  color: white !important;
+}
+#deposit-icon {
+  color: white !important;
+}
+div.deposit-send-payment-div:nth-of-type(2) .card-button {
+  background-color: #232F3E !important;
+  border-color: #232F3E !important;
+}
+div.deposit-send-payment-div:nth-of-type(2) .card-button:hover {
+  background-color: #1a2332 !important;
+}
+
+/* 송금하기 버튼 - 오렌지 */
+#paymentSpan {
+  color: white !important;
+}
+#payment-icon {
+  color: white !important;
+}
+div.deposit-send-payment-div:nth-of-type(3) .card-button {
+  background-color: #FF9900 !important;
+  border-color: #FF9900 !important;
+}
+div.deposit-send-payment-div:nth-of-type(3) .card-button:hover {
+  background-color: #e68a00 !important;
+}
+
+/* 모달 입금 버튼 - 네이비 */
+#depositFunds .btn-primary {
+  background-color: #232F3E !important;
+  border-color: #232F3E !important;
+}
+#depositFunds .btn-primary:hover {
+  background-color: #1a2332 !important;
+  border-color: #1a2332 !important;
+}
+
+/* 모달 송금 버튼 - 오렌지 */
+#sendPayment .btn-primary {
+  background-color: #FF9900 !important;
+  border-color: #FF9900 !important;
+}
+#sendPayment .btn-primary:hover {
+  background-color: #e68a00 !important;
+  border-color: #e68a00 !important;
+}
+</style>
   </head>
   <body>
 {% include 'shared/platform_banner.html' %}
@@ -51,19 +120,19 @@ limitations under the License.
       <!-- Top row - overview, account # -->
       <div class="row col-lg-12 align-items-start top-row">
         <div class="col-md-8">
-          <small class="text-uppercase text-muted secondary-text">Overview</small>
-          <h2 class="header-title">Checking Account</h2>
+          <small class="text-uppercase text-muted secondary-text">개요</small>
+          <h2 class="header-title">진형형의 계좌</h2>
         </div>
 
         <div class="col-md-4 account-info text-right">
             <p>
               <span class="account-overview account-icon material-icons">info</span>
-              <span class="account-num-text">Account Number:</span><span class="account-number">{{ account_id }}</span>
+              <span class="account-num-text">계좌번호:</span><span class="account-number">{{ account_id }}</span>
             </p>
         </div>
     </div>
 
-    <!-- Balance / Deposit / Send Payment row -->
+    <!-- Balance / Deposit / 송금하기 row -->
     <div class="row col-lg-12 align-items-start">
       <div class="col-lg-4">
           <div class="card">
@@ -71,7 +140,7 @@ limitations under the License.
               <div class="row align-items-start">
                 <div class="col">
                   <p class="text-uppercase mb-3">
-                    <b class="current-balance">Current Balance</b>
+                    <b class="current-balance">현재 잔액</b>
                   </p>
                   <span class="h1 mb-0" id="current-balance">
                     {{ format_currency(balance) }}
@@ -89,7 +158,7 @@ limitations under the License.
             <div class="row align-items-start">
               <div class="col">
                 <span class="h5 mb-0" id="depositSpan">
-                  Deposit Funds
+                  입금하기
                 </span>
               </div>
               <div class="button-icon col-auto">
@@ -105,7 +174,7 @@ limitations under the License.
             <div class="row align-items-start">
               <div class="col">
                 <span class="h5 mb-0" id="paymentSpan">
-                  Send Payment
+                  송금하기
                 </span>
               </div>
               <div class="button-icon col-auto">
@@ -116,7 +185,7 @@ limitations under the License.
         </div>
       </div>
 
-      <!-- Transaction History Table -->
+      <!-- 거래 내역 Table -->
       <div class="row col-lg-12 mb-4 align-items-start">
         <div class="col-lg-12">
           <div class="card" class="transaction-card">
@@ -124,34 +193,34 @@ limitations under the License.
               <div class="row align-items-start">
                 <div class="col">
                   <h4 class="card-header-title">
-                    Transaction History
+                    거래 내역
                   </h4>
                 </div>
               </div>
             </div>
             <div class="table-responsive mb-0" id="transaction-table">
             {% if history is none %}
-              <h4 class="card-table-header">Error: Could Not Load Transactions</h4>
+              <h4 class="card-table-header">오류: 거래 내역을 불러올 수 없습니다</h4>
             {% elif history|length == 0 %}
-              <h4 class="card-table-header">No Transactions Found</h4>
+              <h4 class="card-table-header">거래 내역이 없습니다</h4>
             {% else %}
               <table class="table table-sm table-nowrap card-table">
                 <thead class="text-uppercase">
                   <tr>
                     <th>
-                      <a class="text-transaction-header">Date</a>
+                      <a class="text-transaction-header">날짜</a>
                     </th>
                     <th>
-                      <a class="text-transaction-header">Type</a>
+                      <a class="text-transaction-header">유형</a>
                     </th>
                     <th>
-                      <a class="text-transaction-header">Account</a>
+                      <a class="text-transaction-header">계좌</a>
                     </th>
                     <th>
-                      <a class="text-transaction-header">Label</a>
+                      <a class="text-transaction-header">라벨</a>
                     </th>
                     <th class="text-right">
-                      <a class="text-transaction-header">Amount</a>
+                      <a class="text-transaction-header">금액</a>
                     </th>
                   </tr>
                 </thead>
@@ -163,7 +232,7 @@ limitations under the License.
                     </td>
                     {% if t.toAccountNum == account_id %}
                       <td class="transaction-type">
-                        <span class="text-debit">●</span> Credit
+                        <span class="text-debit">●</span> 입금
                       </td>
                       <td class="transaction-account">
                         {{ t.fromAccountNum }}
@@ -172,7 +241,7 @@ limitations under the License.
                         {% if t.accountLabel != None %}
                           {{ t.accountLabel }}
                         {% else %}
-                          <span class="transaction-label-none">None</span>
+                          <span class="transaction-label-none">없음</span>
                         {% endif %}
                       </td>
                       <td class="transaction-amount transaction-amount-credit">
@@ -180,7 +249,7 @@ limitations under the License.
                       </td>
                     {% elif t.fromAccountNum == account_id %}
                       <td class="transaction-type">
-                        <span class="text-credit">●</span> Debit
+                        <span class="text-credit">●</span> 출금
                       </td>
                       <td class="transaction-account">
                         {{ t.toAccountNum }}
@@ -189,7 +258,7 @@ limitations under the License.
                         {% if t.accountLabel != None %}
                           {{ t.accountLabel }}
                         {% else %}
-                          <span class="transaction-label-none">None</span>
+                          <span class="transaction-label-none">없음</span>
                         {% endif %}
                       </td>
                       <td class="transaction-amount transaction-amount-debit">
@@ -212,7 +281,7 @@ limitations under the License.
           <div class="modal-content">
             <form id="deposit-form" class="needs-validation" novalidate="" method="POST" action="/deposit">
               <div class="modal-header">
-                <h3 class="modal-title header-title" id="exampleModalLongTitle">Make a Deposit</h3>
+                <h3 class="modal-title header-title" id="exampleModalLongTitle">입금하기</h3>
                 <button type="button" class="close deposit-cancel" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -220,7 +289,7 @@ limitations under the License.
               <div class="modal-body">
                   <div class="row">
                     <div class="col-md-10 offset-md-1 mb-4">
-                      <label class="text-uppercase text-muted secondary-text mb-3" for="accounts">External Account</label>
+                      <label class="text-uppercase text-muted secondary-text mb-3" for="accounts">외부 계좌</label>
                       <select class="custom-select d-block w-100" id="accounts" name="account">
                         {% for account in contacts %}
                           {% if account.is_external %}
@@ -230,7 +299,7 @@ limitations under the License.
                           {% endif %}
                         {% endfor %}
                         <option disabled>──────────</option>
-                        <option value="add">New External Account</option>
+                        <option value="add">New 외부 계좌</option>
                       </select>
                       <div id="otherDepositInputs" class="hidden">
                         <div id="alertBanner" class="alert alert-danger mt-3 mb-3" role="alert">
@@ -240,7 +309,7 @@ limitations under the License.
                           <div class="input-group-prepend">
                             <span class="input-group-text"><strong class="modal-icon">#</strong></span>
                           </div>
-                          <input class="form-control" type="number" step='1' id="external_account_num" name="external_account_num" min=1000000000 max=9999999999  placeholder="Account Number"/>
+                          <input class="form-control" type="number" step='1' id="external_account_num" name="external_account_num" min=1000000000 max=9999999999  placeholder="계좌번호"/>
                           <div class="invalid-feedback">
                             Please enter a valid 10 digit account number.
                           </div>
@@ -249,7 +318,7 @@ limitations under the License.
                           <div class="input-group-prepend">
                             <span class="input-group-text"><span class="modal-icon material-icons">account_balance</span></span>
                           </div>
-                          <input class="form-control" type="number" step='1' id="external_routing_num" name="external_routing_num" min=100000000 max=999999999  placeholder="Routing Number"/>
+                          <input class="form-control" type="number" step='1' id="external_routing_num" name="external_routing_num" min=100000000 max=999999999  placeholder="라우팅 번호"/>
                           <div class="invalid-feedback">
                             Please enter a valid 9 digit routing number.
                           </div>
@@ -258,7 +327,7 @@ limitations under the License.
                           <div class="input-group-prepend">
                             <span class="input-group-text"><span class="modal-icon material-icons">label</span></span>
                           </div>
-                          <input class="form-control"  type="text" id="external_label" maxLength="30" pattern="^[0-9a-zA-Z][0-9a-zA-Z ]{0,29}$" name="external_label" placeholder="Account Label (Optional)"/>
+                          <input class="form-control"  type="text" id="external_label" maxLength="30" pattern="^[0-9a-zA-Z][0-9a-zA-Z ]{0,29}$" name="external_label" placeholder="계좌 라벨 (선택사항)"/>
                           <div class="invalid-feedback">
                             Invalid label.
                           </div>
@@ -266,7 +335,7 @@ limitations under the License.
                       </div>
                     </div>
                     <div class="col-md-10 offset-md-1">
-                      <label class="text-uppercase text-muted secondary-text mb-1" for="deposit-amount">Deposit Amount</label>
+                      <label class="text-uppercase text-muted secondary-text mb-1" for="deposit-amount">입금 금액</label>
                       <div class="input-group mb-3">
                         <div class="input-group-prepend mr-2">
                           <span class="input-group-text"><span class="amount-font material-icons money-icon">attach_money</span></span>
@@ -283,8 +352,8 @@ limitations under the License.
                 <div class="modal-body">
                   <div class="row align-items-end text-right">
                     <div class="col-md-10 offset-md-1 text-right align-items-end">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary btn-with-padding deposit-send-button">Deposit</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-primary btn-with-padding deposit-send-button">입금</button>
                       </div>
                     </div>
                 </div>
@@ -301,7 +370,7 @@ limitations under the License.
           <div class="modal-content">
             <form id="payment-form" class="needs-validation" novalidate="" method="POST" action="/payment">
               <div class="modal-header">
-                <h3 class="modal-title header-title" id="exampleModalLongTitle">Send a Payment</h3>
+                <h3 class="modal-title header-title" id="exampleModalLongTitle">송금하기</h3>
                 <button type="button" class="close payment-cancel" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -309,7 +378,7 @@ limitations under the License.
               <div class="modal-body">
                 <div class="row">
                   <div class="col-md-10 offset-md-1 mb-4">
-                    <label class="text-uppercase text-muted secondary-text mb-3" for="payment-accounts">Recipient</label>
+                    <label class="text-uppercase text-muted secondary-text mb-3" for="payment-accounts">받는 사람</label>
 
                     <select class="custom-select d-block w-100 mb-3" id="payment-accounts" name="account_num">
                       {% for account in contacts %}
@@ -318,14 +387,14 @@ limitations under the License.
                           {% endif %}
                       {% endfor %}
                       <option disabled>──────────</option>
-                      <option value="add">New Recipient</option>
+                      <option value="add">New 받는 사람</option>
                     </select>
                     <div id="otherAccountInputs" class="hidden">
                       <div class="input-group mb-3">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><strong class="modal-icon">#</strong></span>
                         </div>
-                        <input class="form-control" type="number" step='1' id="contact_account_num" name="contact_account_num" min=1000000000 max=9999999999  placeholder="Account Number"/>
+                        <input class="form-control" type="number" step='1' id="contact_account_num" name="contact_account_num" min=1000000000 max=9999999999  placeholder="계좌번호"/>
                         <div class="invalid-feedback">
                           Please enter a valid 10 digit account number.
                         </div>
@@ -334,7 +403,7 @@ limitations under the License.
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span class="modal-icon material-icons">label</span></span>
                         </div>
-                        <input class="form-control"  type="text" id="contact_label" name="contact_label" maxLength="30" pattern="^[0-9a-zA-Z][0-9a-zA-Z ]{0,29}$" placeholder="Contact Label (Optional)"/>
+                        <input class="form-control"  type="text" id="contact_label" name="contact_label" maxLength="30" pattern="^[0-9a-zA-Z][0-9a-zA-Z ]{0,29}$" placeholder="연락처 라벨 (선택사항)"/>
                         <div class="invalid-feedback">
                             Invalid label.
                           </div>
@@ -342,7 +411,7 @@ limitations under the License.
                     </div>
                   </div>
                   <div class="col-md-10 offset-md-1">
-                    <label class="text-uppercase text-muted secondary-text mb-3" for="payment-amount">Transaction Amount</label>
+                    <label class="text-uppercase text-muted secondary-text mb-3" for="payment-amount">거래 금액</label>
                     <div class="input-group mb-3">
                       <div class="input-group-prepend mr-2">
                         <span class="input-group-text"><span class="amount-font material-icons">attach_money</span></span>
@@ -359,8 +428,8 @@ limitations under the License.
               <div class="modal-body">
                 <div class="row align-items-end text-right">
                   <div class="col-md-10 offset-md-1 text-right align-items-end">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                      <button type="submit" class="btn btn-primary btn-with-padding deposit-send-button">Send</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                      <button type="submit" class="btn btn-primary btn-with-padding deposit-send-button">보내기</button>
                     </div>
                   </div>
               </div>
